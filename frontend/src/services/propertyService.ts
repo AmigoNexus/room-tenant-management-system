@@ -66,16 +66,64 @@ export const propertyService = {
     return unwrapPayload(response);
   },
 
-  addFlat: async (flat: { 
+  addFlat: async (flat: {
     flatNumber: string;
     rentAmount: number;
     depositAmount: number;
     maintenanceAmount: number;
     status: 'AVAILABLE' | 'OCCUPIED' | 'MAINTENANCE';
+    flatType?: string;
     floorId: string;
   }) => {
     const { floorId, ...payload } = flat;
     const response = await axios.post(`/properties/floors/${floorId}/flats`, payload);
+    return unwrapPayload(response);
+  },
+
+  updateProperty: async (id: string | number, data: { propertyName: string; address: string }) => {
+    const response = await axios.put(`/properties/${id}`, data);
+    return unwrapPayload(response);
+  },
+
+  deleteProperty: async (id: string | number) => {
+    const response = await axios.delete(`/properties/${id}`);
+    return unwrapPayload(response);
+  },
+
+  updateWing: async (id: string | number, data: { wingName: string; propertyId: string }) => {
+    const response = await axios.put(`/properties/wings/${id}`, data);
+    return unwrapPayload(response);
+  },
+
+  deleteWing: async (id: string | number) => {
+    const response = await axios.delete(`/properties/wings/${id}`);
+    return unwrapPayload(response);
+  },
+
+  updateFloor: async (id: string | number, data: { floorName: string; propertyId: string; wingId: string | number }) => {
+    const response = await axios.put(`/properties/floors/${id}`, data);
+    return unwrapPayload(response);
+  },
+
+  deleteFloor: async (id: string | number) => {
+    const response = await axios.delete(`/properties/floors/${id}`);
+    return unwrapPayload(response);
+  },
+
+  updateFlat: async (id: string | number, data: {
+    flatNumber?: string;
+    rentAmount?: number;
+    depositAmount?: number;
+    maintenanceAmount?: number;
+    status?: string;
+    flatType?: string;
+  }) => {
+    const response = await axios.put(`/properties/flats/${id}`, data);
+    return unwrapPayload(response);
+  },
+
+  deleteFlat: async (id: string | number) => {
+    const response = await axios.delete(`/properties/flats/${id}`);
     return unwrapPayload(response);
   }
 };

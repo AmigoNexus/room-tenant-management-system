@@ -13,6 +13,9 @@ public interface PropertyMapper {
 
     @Mapping(target = "ownerId", source = "owner.id")
     @Mapping(target = "ownerName", source = "owner.fullName")
+    @Mapping(target = "wingsCount", source = "wingsCount")
+    @Mapping(target = "floorsCount", source = "floorsCount")
+    @Mapping(target = "flatsCount", source = "flatsCount")
     PropertyResponse toPropertyResponse(Property property);
 
     @Mapping(target = "propertyId", source = "property.id")

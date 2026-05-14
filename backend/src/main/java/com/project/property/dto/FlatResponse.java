@@ -19,4 +19,5 @@ public class FlatResponse {
     private BigDecimal depositAmount;
     private BigDecimal maintenanceAmount;
     private FlatStatus status;
+    private String flatType;
 }

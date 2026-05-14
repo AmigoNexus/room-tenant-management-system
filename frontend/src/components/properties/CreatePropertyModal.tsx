@@ -4,30 +4,31 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogDescription,
   DialogFooter
 } from '@/components/ui/dialog';
-import { 
-  Form, 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage 
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { propertyService } from '@/services/propertyService';
 import { useToast } from '@/hooks/use-toast';
+import { Property } from '@/types';
 
 const propertySchema = z.object({
   propertyName: z.string().min(3, 'Property name must be at least 3 characters'),
-  address: z.string().min(5, 'Address must be at least 5 characters'),
+  address: z.string().optional(),
 });
 
 type PropertyFormValues = z.infer<typeof propertySchema>;
@@ -36,31 +37,46 @@ interface CreatePropertyModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
+  editProperty?: Property | null;
 }
 
-export default function CreatePropertyModal({ open, onOpenChange, onSuccess }: CreatePropertyModalProps) {
+export default function CreatePropertyModal({ open, onOpenChange, onSuccess, editProperty }: CreatePropertyModalProps) {
   const [loading, setLoading] = React.useState(false);
   const { toast } = useToast();
 
   const form = useForm<PropertyFormValues>({
     resolver: zodResolver(propertySchema),
     defaultValues: {
-      propertyName: '',
-      address: '',
+      propertyName: editProperty?.propertyName || '',
+      address: editProperty?.address || '',
     },
   });
+
+  React.useEffect(() => {
+    if (open) {
+      form.reset({
+        propertyName: editProperty?.propertyName || '',
+        address: editProperty?.address || '',
+      });
+    }
+  }, [open, editProperty, form]);
 
   const onSubmit = async (values: PropertyFormValues) => {
     setLoading(true);
     try {
-      await propertyService.addProperty({
-        propertyName: values.propertyName,
-        address: values.address,
-      });
-      toast({
-        title: 'Success',
-        description: 'Property created successfully',
-      });
+      if (editProperty) {
+        await propertyService.updateProperty(editProperty.id, {
+          propertyName: values.propertyName,
+          address: values.address || '',
+        });
+        toast({ title: 'Success', description: 'Property updated successfully' });
+      } else {
+        await propertyService.addProperty({
+          propertyName: values.propertyName,
+          address: values.address || '',
+        });
+        toast({ title: 'Success', description: 'Property created successfully' });
+      }
       form.reset();
       onSuccess();
       onOpenChange(false);
@@ -79,9 +95,11 @@ export default function CreatePropertyModal({ open, onOpenChange, onSuccess }: C
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-125 rounded-4xl border-none shadow-2xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black text-slate-900">Add New Property</DialogTitle>
+          <DialogTitle className="text-2xl font-black text-slate-900">
+            {editProperty ? 'Edit Property' : 'Add New Property'}
+          </DialogTitle>
           <DialogDescription className="font-medium text-slate-500">
-            Enter the details of your new property below.
+            {editProperty ? 'Update the details of your property.' : 'Enter the details of your new property below.'}
           </DialogDescription>
         </DialogHeader>
 
@@ -91,13 +109,13 @@ export default function CreatePropertyModal({ open, onOpenChange, onSuccess }: C
               control={form.control}
               name="propertyName"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className='flex flex-col gap-1'>
                   <FormLabel className="text-slate-700 font-bold">Property Name</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="e.g. Skyline Apartments" 
-                      className="h-12 rounded-xl bg-slate-50 border-slate-100 focus:ring-indigo-600 focus:bg-white transition-all" 
-                      {...field} 
+                    <Input
+                      placeholder="e.g. Skyline Apartments"
+                      className="h-12 rounded-xl  bg-slate-50 border-slate-100 focus:ring-indigo-600 focus:bg-white transition-all"
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -108,13 +126,13 @@ export default function CreatePropertyModal({ open, onOpenChange, onSuccess }: C
               control={form.control}
               name="address"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className='flex flex-col gap-1'>
                   <FormLabel className="text-slate-700 font-bold">Address</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="e.g. 123 Main St, New York" 
-                      className="h-12 rounded-xl bg-slate-50 border-slate-100 focus:ring-indigo-600 focus:bg-white transition-all" 
-                      {...field} 
+                    <Input
+                      placeholder="e.g. 123 Main St, Dhanori Road"
+                      className="h-12 rounded-xl bg-slate-50 border-slate-100 focus:ring-indigo-600 focus:bg-white transition-all"
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -122,20 +140,20 @@ export default function CreatePropertyModal({ open, onOpenChange, onSuccess }: C
               )}
             />
             <DialogFooter className="pt-4">
-              <Button 
-                type="button" 
-                variant="ghost" 
+              <Button
+                type="button"
+                variant="ghost"
                 className="rounded-xl font-bold h-12"
                 onClick={() => onOpenChange(false)}
               >
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={loading}
                 className="rounded-xl font-black h-12 px-8 bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-95"
               >
-                {loading ? 'Creating...' : 'Create Property'}
+                {loading ? (editProperty ? 'Updating...' : 'Creating...') : (editProperty ? 'Update Property' : 'Create Property')}
               </Button>
             </DialogFooter>
           </form>

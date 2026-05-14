@@ -3,42 +3,57 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import DashboardLayout from '@/layouts/DashboardLayout';
-import { 
-  Building2, 
-  Plus, 
-  Search, 
-  MoreVertical, 
-  MapPin, 
-  DoorOpen, 
-  Users 
+import {
+  Building2,
+  Plus,
+  Search,
+  MapPin,
+  DoorOpen,
+  Users,
+  Settings2,
+  Edit2,
+  Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { motion } from 'framer-motion';
 
 import { propertyService } from '@/services/propertyService';
 import CreatePropertyModal from '@/components/properties/CreatePropertyModal';
+import DeleteConfirmModal from '@/components/properties/DeleteConfirmModal';
+import { useToast } from '@/hooks/use-toast';
 
 export default function PropertiesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProperty, setEditingProperty] = useState<any>(null);
+  const [deleteConfig, setDeleteConfig] = useState<{
+    open: boolean;
+    id: string | number | null;
+    loading: boolean;
+  }>({
+    open: false,
+    id: null,
+    loading: false,
+  });
+  const { toast } = useToast();
 
   const fetchProperties = async () => {
     setLoading(true);
@@ -53,12 +68,27 @@ export default function PropertiesPage() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!deleteConfig.id) return;
+    setDeleteConfig(prev => ({ ...prev, loading: true }));
+    try {
+      await propertyService.deleteProperty(deleteConfig.id);
+      toast({ title: 'Success', description: 'Property deleted successfully' });
+      setDeleteConfig({ open: false, id: null, loading: false });
+      fetchProperties();
+    } catch (error: any) {
+      toast({ variant: 'destructive', title: 'Error', description: error.message || 'Failed to delete property' });
+    } finally {
+      setDeleteConfig(prev => ({ ...prev, loading: false }));
+    }
+  };
+
   useEffect(() => {
     fetchProperties();
   }, []);
 
-  const filteredProperties = properties.filter(p => 
-    p.propertyName?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredProperties = properties.filter(p =>
+    p.propertyName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     p.address?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -81,8 +111,8 @@ export default function PropertiesPage() {
         <div className="flex items-center gap-4 max-w-md bg-white p-2 rounded-2xl border border-slate-100 shadow-sm">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <Input 
-              placeholder="Search by name or location..." 
+            <Input
+              placeholder="Search by name or location..."
               className="pl-10 h-10 bg-transparent border-none focus-visible:ring-0 text-slate-900"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -91,9 +121,22 @@ export default function PropertiesPage() {
         </div>
 
         <CreatePropertyModal
-          open={isModalOpen}
-          onOpenChange={setIsModalOpen}
+          open={isModalOpen || !!editingProperty}
+          onOpenChange={(open) => {
+            setIsModalOpen(open);
+            if (!open) setEditingProperty(null);
+          }}
           onSuccess={fetchProperties}
+          editProperty={editingProperty}
+        />
+
+        <DeleteConfirmModal
+          open={deleteConfig.open}
+          onOpenChange={(open) => setDeleteConfig(prev => ({ ...prev, open }))}
+          title="Delete Property"
+          description="Are you sure you want to delete this property? All associated wings, floors, and flats will be permanently removed. This action cannot be undone."
+          onConfirm={handleDelete}
+          loading={deleteConfig.loading}
         />
 
         {loading ? (
@@ -112,11 +155,7 @@ export default function PropertiesPage() {
               >
                 <Card className="overflow-hidden border-none shadow-xl shadow-slate-200/50 bg-white group card-hover rounded-4xl">
                   <div className="h-40 bg-slate-50 flex items-center justify-center relative overflow-hidden">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-indigo-500/5 via-transparent to-transparent" />
                     <Building2 className="w-16 h-16 text-indigo-600/20 group-hover:scale-110 transition-transform duration-500" />
-                    <Badge className="absolute top-6 right-6 bg-white/80 backdrop-blur-md text-indigo-600 border-indigo-50 px-3 py-1.5 rounded-xl font-bold">
-                      {property.wings?.length || 0} Wings
-                    </Badge>
                   </div>
                   <CardHeader className="pb-4">
                     <div className="flex items-start justify-between">
@@ -126,18 +165,6 @@ export default function PropertiesPage() {
                           <MapPin className="w-3.5 h-3.5 text-indigo-600" /> {property.address}
                         </CardDescription>
                       </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="rounded-xl hover:bg-slate-50 h-9 w-9">
-                            <MoreVertical className="w-4 h-4 text-slate-400" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="rounded-xl border-slate-100 p-2 shadow-xl shadow-indigo-100">
-                          <DropdownMenuItem className="rounded-lg px-3 py-2 font-medium focus:bg-indigo-50 focus:text-indigo-600">View Details</DropdownMenuItem>
-                          <DropdownMenuItem className="rounded-lg px-3 py-2 font-medium focus:bg-indigo-50 focus:text-indigo-600">Edit Property</DropdownMenuItem>
-                          <DropdownMenuItem className="rounded-lg px-3 py-2 font-bold focus:bg-red-50 focus:text-red-600">Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
                     </div>
                   </CardHeader>
                   <CardContent className="pb-6">
@@ -148,7 +175,7 @@ export default function PropertiesPage() {
                           <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600">
                             <DoorOpen className="w-4 h-4" />
                           </div>
-                          <span className="font-black text-slate-900">{property.wings?.length ?? property.wingsCount ?? 0}</span>
+                          <span className="font-black text-slate-900">{property.wingsCount ?? 0}</span>
                         </div>
                       </div>
                       <div className="space-y-1.5">
@@ -157,7 +184,7 @@ export default function PropertiesPage() {
                           <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
                             <Users className="w-4 h-4" />
                           </div>
-                          <span className="font-black text-slate-900">{property.floors?.length ?? property.floorCount ?? 0}</span>
+                          <span className="font-black text-slate-900">{property.floorsCount ?? 0}</span>
                         </div>
                       </div>
                       <div className="space-y-1.5">
@@ -166,14 +193,37 @@ export default function PropertiesPage() {
                           <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
                             <Building2 className="w-4 h-4" />
                           </div>
-                          <span className="font-black text-slate-900">{property.flats?.length ?? property.flatCount ?? 0}</span>
+                          <span className="font-black text-slate-900">{property.flatsCount ?? 0}</span>
                         </div>
                       </div>
                     </div>
                   </CardContent>
-                  <CardFooter className="bg-slate-50/80 border-t border-slate-100 py-4 px-8">
-                    <Button variant="link" className="p-0 h-auto text-indigo-600 font-black text-sm hover:no-underline hover:text-indigo-700 transition-colors" asChild>
-                      <Link href={`/properties/${property.id}`}>Manage Assets &rarr;</Link>
+                  <CardFooter className="p-4 pt-0 grid grid-cols-3 gap-2 border-t border-slate-50 mt-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="rounded-xl font-bold text-indigo-600 hover:bg-indigo-50 gap-2 h-10 px-0"
+                      asChild
+                    >
+                      <Link href={`/properties/${property.id}`}>
+                        <Settings2 className="w-4 h-4" /> Manage
+                      </Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="rounded-xl font-bold text-slate-500 hover:bg-slate-50 gap-2 h-10 px-0"
+                      onClick={() => setEditingProperty(property)}
+                    >
+                      <Edit2 className="w-4 h-4" /> Edit
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="rounded-xl font-bold text-rose-500 hover:bg-rose-50 gap-2 h-10 px-0"
+                      onClick={() => setDeleteConfig({ open: true, id: property.id, loading: false })}
+                    >
+                      <Trash2 className="w-4 h-4" /> Delete
                     </Button>
                   </CardFooter>
                 </Card>
@@ -185,9 +235,6 @@ export default function PropertiesPage() {
                 </div>
                 <h3 className="text-xl font-bold text-slate-900">No properties found</h3>
                 <p className="text-slate-400 font-medium">Start by adding your first property to the system.</p>
-                <Button className="mt-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 h-11 px-6 font-bold">
-                  Add Property
-                </Button>
               </div>
             )}
           </div>

@@ -2,8 +2,6 @@ package com.project.property.service.impl;
 
 import com.project.auth.entity.User;
 import com.project.exception.ResourceNotFoundException;
-import com.project.auth.entity.User;
-import com.project.exception.ResourceNotFoundException;
 import com.project.property.dto.*;
 import com.project.property.entity.Flat;
 import com.project.property.entity.Floor;
@@ -81,6 +79,10 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public Page<PropertyResponse> getAllProperties(Pageable pageable, String search) {
+        if (search != null && !search.isEmpty()) {
+            return propertyRepository.findByPropertyNameContainingIgnoreCaseOrAddressContainingIgnoreCase(search, search, pageable)
+                    .map(mapper::toPropertyResponse);
+        }
         return propertyRepository.findAll(pageable).map(mapper::toPropertyResponse);
     }
 
@@ -94,8 +96,40 @@ public class PropertyServiceImpl implements PropertyService {
                 .wingName(request.getWingName())
                 .property(property)
                 .build();
-
+        property.setWingsCount(property.getWingsCount() + 1);
+        propertyRepository.save(property);
         return mapper.toWingResponse(wingRepository.save(wing));
+    }
+
+    @Override
+    @Transactional
+    public WingResponse updateWing(Long id, WingRequest request) {
+        Wing wing = wingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Wing not found"));
+        wing.setWingName(request.getWingName());
+        return mapper.toWingResponse(wingRepository.save(wing));
+    }
+
+    @Override
+    @Transactional
+    public void deleteWing(Long id) {
+        Wing wing = wingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Wing not found"));
+        
+        Property property = wing.getProperty();
+        
+        // Calculate counts to reduce
+        long floorsInWing = wing.getFloors().size();
+        long flatsInWing = wing.getFloors().stream()
+                .mapToLong(floor -> floor.getFlats().size())
+                .sum();
+        
+        property.setWingsCount(Math.max(0, property.getWingsCount() - 1));
+        property.setFloorsCount(Math.max(0, property.getFloorsCount() - (int) floorsInWing));
+        property.setFlatsCount(Math.max(0, property.getFlatsCount() - (int) flatsInWing));
+        
+        propertyRepository.save(property);
+        wingRepository.delete(wing);
     }
 
     @Override
@@ -119,8 +153,34 @@ public class PropertyServiceImpl implements PropertyService {
                 .property(property)
                 .wing(wing)
                 .build();
-
+        property.setFloorsCount(property.getFloorsCount() + 1);
+        propertyRepository.save(property);
         return mapper.toFloorResponse(floorRepository.save(floor));
+    }
+
+    @Override
+    @Transactional
+    public FloorResponse updateFloor(Long id, FloorRequest request) {
+        Floor floor = floorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Floor not found"));
+        floor.setFloorName(request.getFloorName());
+        return mapper.toFloorResponse(floorRepository.save(floor));
+    }
+
+    @Override
+    @Transactional
+    public void deleteFloor(Long id) {
+        Floor floor = floorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Floor not found"));
+        
+        Property property = floor.getProperty();
+        long flatsInFloor = floor.getFlats().size();
+        
+        property.setFloorsCount(Math.max(0, property.getFloorsCount() - 1));
+        property.setFlatsCount(Math.max(0, property.getFlatsCount() - (int) flatsInFloor));
+        
+        propertyRepository.save(property);
+        floorRepository.delete(floor);
     }
 
     @Override
@@ -133,8 +193,12 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     @Transactional
     public FlatResponse addFlat(Long floorId, FlatRequest request) {
+
         Floor floor = floorRepository.findById(floorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Floor not found"));
+        Property property = floor.getProperty();
+        property.setFlatsCount(property.getFlatsCount() + 1);
+        propertyRepository.save(property);
 
         Flat flat = Flat.builder()
                 .flatNumber(request.getFlatNumber())
@@ -142,10 +206,40 @@ public class PropertyServiceImpl implements PropertyService {
                 .depositAmount(request.getDepositAmount())
                 .maintenanceAmount(request.getMaintenanceAmount())
                 .status(request.getStatus())
+                .flatType(request.getFlatType())
                 .floor(floor)
                 .build();
 
         return mapper.toFlatResponse(flatRepository.save(flat));
+    }
+
+    @Override
+    @Transactional
+    public FlatResponse updateFlat(Long id, FlatRequest request) {
+        Flat flat = flatRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Flat not found"));
+        
+        flat.setFlatNumber(request.getFlatNumber());
+        flat.setRentAmount(request.getRentAmount());
+        flat.setDepositAmount(request.getDepositAmount());
+        flat.setMaintenanceAmount(request.getMaintenanceAmount());
+        flat.setStatus(request.getStatus());
+        flat.setFlatType(request.getFlatType());
+        
+        return mapper.toFlatResponse(flatRepository.save(flat));
+    }
+
+    @Override
+    @Transactional
+    public void deleteFlat(Long id) {
+        Flat flat = flatRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Flat not found"));
+        
+        Property property = flat.getFloor().getProperty();
+        property.setFlatsCount(Math.max(0, property.getFlatsCount() - 1));
+        
+        propertyRepository.save(property);
+        flatRepository.delete(flat);
     }
 
     @Override

@@ -23,13 +23,13 @@ export default function Navbar() {
         <Button variant="ghost" size="icon" className="md:hidden text-slate-500">
           <Menu className="w-6 h-6" />
         </Button>
-        <div className="relative max-w-md w-full hidden sm:block">
+        {/* <div className="relative max-w-md w-full hidden sm:block">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input 
             placeholder="Search properties, tenants..." 
             className="pl-11 h-11 bg-slate-50 border-none focus-visible:ring-2 focus-visible:ring-indigo-500/20 rounded-xl" 
           />
-        </div>
+        </div> */}
       </div>
 
       <div className="flex items-center gap-4">

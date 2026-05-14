@@ -33,4 +33,6 @@ public class FlatRequest {
 
     @Builder.Default
     private FlatStatus status = FlatStatus.AVAILABLE;
+
+    private String flatType;
 }

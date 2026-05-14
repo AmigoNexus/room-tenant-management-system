@@ -28,4 +28,11 @@ public class Property extends BaseEntity {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
+    private int wingsCount;
+    private int floorsCount;
+    private int flatsCount;
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Wing> wings;
+
 }

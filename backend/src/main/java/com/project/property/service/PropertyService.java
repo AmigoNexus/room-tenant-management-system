@@ -14,11 +14,17 @@ public interface PropertyService {
     Page<PropertyResponse> getAllProperties(Pageable pageable, String search);
     
     WingResponse addWing(WingRequest request);
+    WingResponse updateWing(Long id, WingRequest request);
+    void deleteWing(Long id);
     List<WingResponse> getWingsByPropertyId(Long propertyId);
     
     FloorResponse addFloor(FloorRequest request);
+    FloorResponse updateFloor(Long id, FloorRequest request);
+    void deleteFloor(Long id);
     List<FloorResponse> getFloorsByWingId(Long wingId);
     
     FlatResponse addFlat(Long floorId, FlatRequest request);
+    FlatResponse updateFlat(Long id, FlatRequest request);
+    void deleteFlat(Long id);
     List<FlatResponse> getFlatsByFloorId(Long floorId);
 }

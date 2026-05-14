@@ -36,6 +36,9 @@ public class Flat extends BaseEntity {
     @Column(nullable = false)
     private FlatStatus status;
 
+    @Column
+    private String flatType;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "floor_id", nullable = false)
     private Floor floor;

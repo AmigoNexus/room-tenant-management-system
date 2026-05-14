@@ -71,6 +71,22 @@ public class PropertyController {
         return ResponseEntity.ok(ApiResponse.success("Wing added successfully", service.addWing(request)));
     }
 
+    @PutMapping("/wings/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<ApiResponse<WingResponse>> updateWing(
+            @PathVariable Long id,
+            @Valid @RequestBody WingRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.success("Wing updated successfully", service.updateWing(id, request)));
+    }
+
+    @DeleteMapping("/wings/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<ApiResponse<Void>> deleteWing(@PathVariable Long id) {
+        service.deleteWing(id);
+        return ResponseEntity.ok(ApiResponse.success("Wing deleted successfully", null));
+    }
+
     @GetMapping("/{propertyId}/wings")
     public ResponseEntity<ApiResponse<List<WingResponse>>> getWingsByPropertyId(@PathVariable Long propertyId) {
         return ResponseEntity.ok(ApiResponse.success("Wings fetched successfully", service.getWingsByPropertyId(propertyId)));
@@ -82,6 +98,22 @@ public class PropertyController {
             @Valid @RequestBody FloorRequest request
     ) {
         return ResponseEntity.ok(ApiResponse.success("Floor added successfully", service.addFloor(request)));
+    }
+
+    @PutMapping("/floors/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<ApiResponse<FloorResponse>> updateFloor(
+            @PathVariable Long id,
+            @Valid @RequestBody FloorRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.success("Floor updated successfully", service.updateFloor(id, request)));
+    }
+
+    @DeleteMapping("/floors/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<ApiResponse<Void>> deleteFloor(@PathVariable Long id) {
+        service.deleteFloor(id);
+        return ResponseEntity.ok(ApiResponse.success("Floor deleted successfully", null));
     }
 
     @GetMapping("/wings/{wingId}/floors")
@@ -96,6 +128,22 @@ public class PropertyController {
             @Valid @RequestBody FlatRequest request
     ) {
         return ResponseEntity.ok(ApiResponse.success("Flat added successfully", service.addFlat(floorId, request)));
+    }
+
+    @PutMapping("/flats/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<ApiResponse<FlatResponse>> updateFlat(
+            @PathVariable Long id,
+            @Valid @RequestBody FlatRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.success("Flat updated successfully", service.updateFlat(id, request)));
+    }
+
+    @DeleteMapping("/flats/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<ApiResponse<Void>> deleteFlat(@PathVariable Long id) {
+        service.deleteFlat(id);
+        return ResponseEntity.ok(ApiResponse.success("Flat deleted successfully", null));
     }
 
     @GetMapping("/floors/{floorId}/flats")

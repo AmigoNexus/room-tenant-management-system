@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-05-13T16:07:48+0530",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.8 (Microsoft)"
+    date = "2026-05-14T14:03:21+0530",
+    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.46.0.v20260407-0427, environment: Java 21.0.10 (Eclipse Adoptium)"
 )
 @Component
 public class PropertyMapperImpl implements PropertyMapper {
@@ -30,6 +30,9 @@ public class PropertyMapperImpl implements PropertyMapper {
 
         propertyResponse.ownerId( propertyOwnerId( property ) );
         propertyResponse.ownerName( propertyOwnerFullName( property ) );
+        propertyResponse.wingsCount( property.getWingsCount() );
+        propertyResponse.floorsCount( property.getFloorsCount() );
+        propertyResponse.flatsCount( property.getFlatsCount() );
         propertyResponse.id( property.getId() );
         propertyResponse.propertyName( property.getPropertyName() );
         propertyResponse.address( property.getAddress() );
@@ -86,6 +89,7 @@ public class PropertyMapperImpl implements PropertyMapper {
         flatResponse.depositAmount( flat.getDepositAmount() );
         flatResponse.maintenanceAmount( flat.getMaintenanceAmount() );
         flatResponse.status( flat.getStatus() );
+        flatResponse.flatType( flat.getFlatType() );
 
         return flatResponse.build();
     }

@@ -18,4 +18,7 @@ public class PropertyResponse {
     private Long ownerId;
     private String ownerName;
     private LocalDateTime createdAt;
+    private int wingsCount;
+    private int floorsCount;
+    private int flatsCount;
 }

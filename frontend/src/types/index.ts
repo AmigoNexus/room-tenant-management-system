@@ -68,6 +68,7 @@ export interface Flat {
   depositAmount: number;
   maintenanceAmount: number;
   status: 'AVAILABLE' | 'OCCUPIED' | 'MAINTENANCE';
+  flatType?: string;
   notes?: string;
 }
 
