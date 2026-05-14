@@ -43,12 +43,12 @@ interface PropertyHierarchyProps {
   wings: Wing[];
   floors: Floor[];
   flats: Flat[];
-  selectedWingId?: string | number | null;
-  selectedFloorId?: string | number | null;
-  selectedFlatId?: string | number | null;
+  selectedWingId?: string | number | undefined;
+  selectedFloorId?: string | number | undefined;
+  selectedFlatId?: string | number | undefined;
   onSelectWing: (id: string | number) => void;
   onSelectFloor: (id: string | number) => void;
-  onSelectFlat: (id: string | number | null) => void;
+  onSelectFlat: (id: string | number | undefined) => void;
   onAddWing: () => void;
   onAddFloor: (wingId: string | number) => void;
   onAddFlat: (floorId: string | number) => void;
