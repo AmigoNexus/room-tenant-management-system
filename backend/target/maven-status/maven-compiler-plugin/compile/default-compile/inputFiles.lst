@@ -6,6 +6,7 @@ D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\sec
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\auth\dto\AuthenticationRequest.java
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\payment\controller\PaymentController.java
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\tenant\dto\TenantResponse.java
+D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\property\repository\FloorRepository.java
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\tenant\mapper\TenantMapper.java
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\report\dto\OccupancyReport.java
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\tenant\service\impl\MappingServiceImpl.java
@@ -31,6 +32,7 @@ D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\pro
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\property\entity\Wing.java
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\exception\GlobalExceptionHandler.java
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\RtmsApplication.java
+D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\property\entity\Floor.java
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\tenant\service\MappingService.java
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\auth\dto\RegisterRequest.java
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\tenant\repository\TenantFlatMappingRepository.java
@@ -45,7 +47,9 @@ D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\aut
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\common\ApiResponse.java
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\payment\entity\Payment.java
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\property\repository\WingRepository.java
+D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\property\dto\FloorRequest.java
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\exception\BusinessException.java
+D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\property\dto\FloorResponse.java
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\property\mapper\PropertyMapper.java
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\property\entity\Flat.java
 D:\workspace\room-tenant-management-system\backend\src\main\java\com\project\auth\repository\UserRepository.java

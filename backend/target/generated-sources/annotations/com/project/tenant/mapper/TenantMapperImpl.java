@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-05-14T12:57:32+0530",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.46.0.v20260407-0427, environment: Java 21.0.10 (Eclipse Adoptium)"
+    date = "2026-05-15T11:43:20+0530",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.8 (Microsoft)"
 )
 @Component
 public class TenantMapperImpl implements TenantMapper {
@@ -26,11 +26,14 @@ public class TenantMapperImpl implements TenantMapper {
         tenantResponse.fullName( tenantUserFullName( tenant ) );
         tenantResponse.email( tenantUserEmail( tenant ) );
         tenantResponse.phone( tenantUserPhone( tenant ) );
-        tenantResponse.address( tenant.getAddress() );
+        tenantResponse.active( tenantUserActive( tenant ) );
         tenantResponse.id( tenant.getId() );
-        tenantResponse.idProof( tenant.getIdProof() );
+        tenantResponse.address( tenant.getAddress() );
         tenantResponse.occupation( tenant.getOccupation() );
+        tenantResponse.idProof( tenant.getIdProof() );
         tenantResponse.profileImage( tenant.getProfileImage() );
+
+        tenantResponse.createdAt( tenant.getCreatedAt() != null ? tenant.getCreatedAt().toString() : null );
 
         return tenantResponse.build();
     }
@@ -93,5 +96,17 @@ public class TenantMapperImpl implements TenantMapper {
             return null;
         }
         return phone;
+    }
+
+    private Boolean tenantUserActive(Tenant tenant) {
+        if ( tenant == null ) {
+            return null;
+        }
+        User user = tenant.getUser();
+        if ( user == null ) {
+            return null;
+        }
+        boolean active = user.isActive();
+        return active;
     }
 }

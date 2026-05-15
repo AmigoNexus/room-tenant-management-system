@@ -12,5 +12,7 @@ public interface TenantMapper {
     @Mapping(target = "fullName", source = "user.fullName")
     @Mapping(target = "email", source = "user.email")
     @Mapping(target = "phone", source = "user.phone")
+    @Mapping(target = "active", source = "user.active")
+    @Mapping(target = "createdAt", expression = "java(tenant.getCreatedAt() != null ? tenant.getCreatedAt().toString() : null)")
     TenantResponse toTenantResponse(Tenant tenant);
 }

@@ -40,4 +40,25 @@ public class TenantController {
     public ResponseEntity<ApiResponse<TenantResponse>> getTenantById(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.success("Tenant fetched successfully", service.getTenantById(id)));
     }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<java.util.List<TenantResponse>>> getAllTenants() {
+        return ResponseEntity.ok(ApiResponse.success("Tenants fetched successfully", service.getAllTenants()));
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<TenantResponse>> createTenant(@RequestBody TenantRequest request) {
+        return ResponseEntity.ok(ApiResponse.success("Tenant created successfully", service.createTenant(request)));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<TenantResponse>> updateTenant(@PathVariable Long id, @RequestBody TenantRequest request) {
+        return ResponseEntity.ok(ApiResponse.success("Tenant updated successfully", service.updateTenant(id, request)));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteTenant(@PathVariable Long id) {
+        service.deleteTenant(id);
+        return ResponseEntity.ok(ApiResponse.success("Tenant deleted successfully", null));
+    }
 }

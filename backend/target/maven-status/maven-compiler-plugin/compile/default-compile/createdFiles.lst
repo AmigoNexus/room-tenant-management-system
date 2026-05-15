@@ -32,6 +32,7 @@ com\project\property\mapper\PropertyMapper.class
 com\project\tenant\mapper\MappingMapperImpl.class
 com\project\property\repository\PropertyRepository.class
 com\project\tenant\repository\TenantRepository.class
+com\project\property\dto\FloorResponse.class
 com\project\property\dto\WingResponse$WingResponseBuilder.class
 com\project\payment\dto\PaymentRequest.class
 com\project\property\entity\Property$PropertyBuilder.class
@@ -57,10 +58,13 @@ com\project\tenant\entity\Tenant.class
 com\project\payment\dto\PaymentResponse$PaymentResponseBuilder.class
 com\project\property\dto\FlatRequest.class
 com\project\auth\dto\AuthenticationRequest.class
+com\project\property\entity\Floor$FloorBuilder.class
 com\project\tenant\entity\TenantFlatMapping.class
 com\project\tenant\service\impl\TenantServiceImpl.class
+com\project\property\repository\FloorRepository.class
 com\project\tenant\controller\TenantController.class
 com\project\config\ApplicationConfig.class
+com\project\property\dto\FloorRequest.class
 com\project\report\dto\OccupancyReport.class
 com\project\property\service\impl\PropertyServiceImpl.class
 com\project\tenant\dto\TenantRequest.class
@@ -78,10 +82,12 @@ com\project\security\JwtService.class
 com\project\property\dto\WingRequest.class
 com\project\exception\BusinessException.class
 com\project\payment\dto\PaymentRequest$PaymentRequestBuilder.class
+com\project\property\dto\FloorRequest$FloorRequestBuilder.class
 com\project\property\entity\Wing.class
 com\project\auth\controller\AuthController.class
 com\project\config\SecurityConfiguration.class
 com\project\payment\service\impl\PaymentServiceImpl.class
+com\project\property\dto\FloorResponse$FloorResponseBuilder.class
 com\project\tenant\mapper\TenantMapperImpl.class
 com\project\tenant\dto\TenantResponse.class
 com\project\auth\entity\User.class
@@ -91,6 +97,7 @@ com\project\property\dto\WingRequest$WingRequestBuilder.class
 com\project\tenant\service\MappingService.class
 com\project\auth\dto\RegisterRequest.class
 com\project\property\dto\FlatResponse$FlatResponseBuilder.class
+com\project\property\entity\Floor.class
 com\project\auth\dto\AuthenticationResponse.class
 com\project\report\dto\RevenueReport.class
 com\project\property\entity\Flat$FlatBuilder.class

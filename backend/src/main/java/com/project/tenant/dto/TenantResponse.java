@@ -19,4 +19,8 @@ public class TenantResponse {
     private String occupation;
     private String idProof;
     private String profileImage;
+    private Boolean active;
+    private String createdAt;
+    private String assignedFlatNumber;
+    private Long assignedMappingId;
 }

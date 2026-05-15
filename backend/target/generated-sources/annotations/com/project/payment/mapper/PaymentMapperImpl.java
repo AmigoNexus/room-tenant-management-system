@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-05-14T12:57:32+0530",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.46.0.v20260407-0427, environment: Java 21.0.10 (Eclipse Adoptium)"
+    date = "2026-05-15T11:43:20+0530",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.8 (Microsoft)"
 )
 @Component
 public class PaymentMapperImpl implements PaymentMapper {
@@ -28,16 +28,16 @@ public class PaymentMapperImpl implements PaymentMapper {
         paymentResponse.tenantName( paymentTenantUserFullName( payment ) );
         paymentResponse.flatId( paymentFlatId( payment ) );
         paymentResponse.flatNumber( paymentFlatFlatNumber( payment ) );
-        paymentResponse.depositAmount( payment.getDepositAmount() );
         paymentResponse.id( payment.getId() );
         paymentResponse.month( payment.getMonth() );
-        paymentResponse.notes( payment.getNotes() );
+        paymentResponse.year( payment.getYear() );
+        paymentResponse.rentAmount( payment.getRentAmount() );
+        paymentResponse.depositAmount( payment.getDepositAmount() );
+        paymentResponse.totalAmount( payment.getTotalAmount() );
+        paymentResponse.paymentStatus( payment.getPaymentStatus() );
         paymentResponse.paymentDate( payment.getPaymentDate() );
         paymentResponse.paymentScreenshot( payment.getPaymentScreenshot() );
-        paymentResponse.paymentStatus( payment.getPaymentStatus() );
-        paymentResponse.rentAmount( payment.getRentAmount() );
-        paymentResponse.totalAmount( payment.getTotalAmount() );
-        paymentResponse.year( payment.getYear() );
+        paymentResponse.notes( payment.getNotes() );
 
         return paymentResponse.build();
     }

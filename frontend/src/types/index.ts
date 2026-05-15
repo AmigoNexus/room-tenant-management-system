@@ -73,24 +73,30 @@ export interface Flat {
 }
 
 export interface Tenant {
-  id: string;
-  name: string;
+  id: number;
+  userId: number;
+  fullName: string;
   email: string;
   phone: string;
-  aadhaar?: string;
-  occupation?: string;
-  joiningDate: string;
-  avatar?: string;
+  address: string;
+  occupation: string;
+  idProof: string;
+  profileImage: string;
+  active: boolean;
+  createdAt: string;
+  assignedFlatNumber?: string;
+  assignedMappingId?: number;
 }
 
 export interface Mapping {
-  id: string;
-  tenantId: string;
-  flatId: string;
-  startDate: string;
-  endDate?: string;
-  rentAmount: number;
-  depositAmount: number;
+  id: number;
+  tenantId: number;
+  tenantName: string;
+  flatId: number;
+  flatNumber: string;
+  agreementStartDate: string;
+  agreementEndDate: string;
+  active: boolean;
 }
 
 export interface Payment {

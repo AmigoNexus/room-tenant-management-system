@@ -15,7 +15,9 @@ import {
   Settings2,
   MoreVertical,
   Edit2,
-  Trash2
+  Trash2,
+  Users,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -35,8 +37,11 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import { Wing, Floor, Flat } from '@/types';
+import { Wing, Floor, Flat, Mapping } from '@/types';
 import { cn } from '@/lib/utils';
+import { mappingService } from '@/services/mappingService';
+import { toast } from 'sonner';
+import AssignTenantModal from './AssignTenantModal';
 
 interface PropertyHierarchyProps {
   propertyId: string;
@@ -58,6 +63,7 @@ interface PropertyHierarchyProps {
   onDeleteFloor: (id: string | number) => void;
   onEditFlat: (flat: Flat) => void;
   onDeleteFlat: (id: string | number) => void;
+  onRefresh: () => void;
 }
 
 export default function PropertyHierarchy({
@@ -79,13 +85,52 @@ export default function PropertyHierarchy({
   onEditFloor,
   onDeleteFloor,
   onEditFlat,
-  onDeleteFlat
+  onDeleteFlat,
+  onRefresh
 }: PropertyHierarchyProps) {
+  const [activeMapping, setActiveMapping] = useState<Mapping | null>(null);
+  const [loadingMapping, setLoadingMapping] = useState(false);
+  const [showAssignModal, setShowAssignModal] = useState(false);
 
   const filteredFloors = floors.filter(f => f.wingId === selectedWingId);
   const filteredFlats = flats.filter(f => f.floorId === selectedFloorId);
 
   const selectedFlat = flats.find(f => f.id === selectedFlatId);
+
+  React.useEffect(() => {
+    if (selectedFlatId && selectedFlat?.status === 'OCCUPIED') {
+      fetchMapping(Number(selectedFlatId));
+    } else {
+      setActiveMapping(null);
+    }
+  }, [selectedFlatId, selectedFlat?.status]);
+
+  const fetchMapping = async (flatId: number) => {
+    try {
+      setLoadingMapping(true);
+      const data = await mappingService.getMappingByFlat(flatId);
+      setActiveMapping(data);
+    } catch (error) {
+      setActiveMapping(null);
+    } finally {
+      setLoadingMapping(false);
+    }
+  };
+
+  const handleRemoveMapping = async () => {
+    if (!activeMapping) return;
+    try {
+      setLoadingMapping(true);
+      await mappingService.removeMapping(activeMapping.id);
+      toast.success('Tenant de-allocated successfully');
+      setActiveMapping(null);
+      onRefresh();
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to remove mapping');
+    } finally {
+      setLoadingMapping(false);
+    }
+  };
 
   return (
     <TooltipProvider>
@@ -468,19 +513,58 @@ export default function PropertyHierarchy({
                     >
                       <Edit2 className="w-4 h-4" /> Edit Flat
                     </Button>
-                    <Button 
-                      variant="destructive"
-                      onClick={() => onDeleteFlat(selectedFlat.id)}
-                      className="h-12 rounded-2xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 font-bold gap-2 border-none"
-                    >
-                      <Trash2 className="w-4 h-4" /> Delete
-                    </Button>
+                    {selectedFlat.status === 'AVAILABLE' ? (
+                      <Button 
+                        onClick={() => setShowAssignModal(true)}
+                        className="h-12 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold gap-2 border-none"
+                      >
+                        <Users className="w-4 h-4" /> Allocate Tenant
+                      </Button>
+                    ) : selectedFlat.status === 'OCCUPIED' ? (
+                      <div className="flex flex-col gap-3">
+                         <div className="p-4 bg-indigo-500/10 rounded-3xl border border-indigo-500/20">
+                            <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest mb-1">Allocated To</p>
+                            {loadingMapping ? (
+                              <Loader2 className="w-4 h-4 animate-spin text-indigo-400" />
+                            ) : (
+                              <p className="font-black text-indigo-200">{activeMapping?.tenantName || "Loading..."}</p>
+                            )}
+                         </div>
+                         <Button 
+                           variant="destructive"
+                           onClick={handleRemoveMapping}
+                           disabled={loadingMapping}
+                           className="h-12 rounded-2xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 font-bold gap-2 border-none"
+                         >
+                           <Trash2 className="w-4 h-4" /> De-allocate
+                         </Button>
+                      </div>
+                    ) : (
+                      <Button 
+                        variant="destructive"
+                        onClick={() => onDeleteFlat(selectedFlat.id)}
+                        className="h-12 rounded-2xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 font-bold gap-2 border-none"
+                      >
+                        <Trash2 className="w-4 h-4" /> Delete
+                      </Button>
+                    )}
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
         </div>
+
+        <AssignTenantModal
+          isOpen={showAssignModal}
+          onClose={() => setShowAssignModal(false)}
+          onSuccess={() => {
+            onRefresh();
+            if (selectedFlatId) fetchMapping(Number(selectedFlatId));
+          }}
+          flatId={selectedFlatId ? Number(selectedFlatId) : null}
+          flatNumber={selectedFlat?.flatNumber || ""}
+        />
       </div>
     </TooltipProvider>
   );

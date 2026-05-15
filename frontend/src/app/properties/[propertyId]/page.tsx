@@ -366,6 +366,7 @@ export default function PropertyDetailsPage() {
             onDeleteFloor={handleDeleteFloor}
             onEditFlat={setEditingFlat}
             onDeleteFlat={handleDeleteFlat}
+            onRefresh={refreshData}
           />
         </section>
       </div>

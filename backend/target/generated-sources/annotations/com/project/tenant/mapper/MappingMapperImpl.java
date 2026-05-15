@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-05-14T12:57:32+0530",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.46.0.v20260407-0427, environment: Java 21.0.10 (Eclipse Adoptium)"
+    date = "2026-05-15T11:43:20+0530",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.8 (Microsoft)"
 )
 @Component
 public class MappingMapperImpl implements MappingMapper {
@@ -28,10 +28,10 @@ public class MappingMapperImpl implements MappingMapper {
         mappingResponse.tenantName( mappingTenantUserFullName( mapping ) );
         mappingResponse.flatId( mappingFlatId( mapping ) );
         mappingResponse.flatNumber( mappingFlatFlatNumber( mapping ) );
-        mappingResponse.active( mapping.isActive() );
-        mappingResponse.agreementEndDate( mapping.getAgreementEndDate() );
-        mappingResponse.agreementStartDate( mapping.getAgreementStartDate() );
         mappingResponse.id( mapping.getId() );
+        mappingResponse.agreementStartDate( mapping.getAgreementStartDate() );
+        mappingResponse.agreementEndDate( mapping.getAgreementEndDate() );
+        mappingResponse.active( mapping.isActive() );
 
         return mappingResponse.build();
     }
