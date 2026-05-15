@@ -115,7 +115,7 @@ export default function PropertyHierarchy({
 
           <div className="flex flex-col gap-3">
             {wings.length > 0 ? wings.map((wing) => (
-              <div className="relative group">
+              <div key={wing.id} className="relative group">
                 <Button
                   variant="ghost"
                   onClick={() => onSelectWing(wing.id)}
@@ -196,7 +196,7 @@ export default function PropertyHierarchy({
                 </div>
               </div>
             )) : (
-              <div className="p-8 rounded-3xl border-2 border-dashed border-slate-100 text-center">
+              <div key="no-wings" className="p-8 rounded-3xl border-2 border-dashed border-slate-100 text-center">
                 <p className="text-slate-400 text-sm font-medium">No wings added</p>
               </div>
             )}
@@ -323,7 +323,7 @@ export default function PropertyHierarchy({
                   </motion.div>
                 )
               ) : (
-                <div className="col-span-full p-12 text-center text-slate-400">
+                <div key="select-wing-prompt" className="col-span-full p-12 text-center text-slate-400">
                   Select a wing to view its floors
                 </div>
               )}
@@ -390,12 +390,12 @@ export default function PropertyHierarchy({
                       )}
                     </motion.button>
                   )) : (
-                    <div className="col-span-full p-8 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
+                    <div key="no-flats" className="col-span-full p-8 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
                       No flats added
                     </div>
                   )
                 ) : (
-                  <div className="col-span-full p-8 text-center text-slate-400">
+                  <div key="select-floor-prompt" className="col-span-full p-8 text-center text-slate-400">
                     Select a floor to view flats
                   </div>
                 )}
